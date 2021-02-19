@@ -13,6 +13,7 @@ int main(){
 	
 	std::cout << "A) Multiply matrices. \n";
 	std::cout << "B) Add matrices. \n";
+	std::cout << "C) Subtract matrices.\n";
 	std::cout << "Q) Quit. \n";
 	std::cin.get(inputKey);
 
@@ -58,6 +59,24 @@ int main(){
 			matrices.matrixInput((double*) matrix2, row, col);
 			
 			matrices.addMatrices((double*) matrix1, (double*) matrix2, row, col);
+			matrices.printMatrix((double*) matrix1, row, col);
+			break;
+		}
+		case 'c':
+		case 'C':{
+			while(!col){
+                std::cout << "Please enter the size of the matrices: \n";
+                matrices.inputMatrixSize(&row, &col);
+            }
+			double matrix1[row][col] = {}, matrix2[row][col] = {};
+
+            std::cout << "Please input the values in each matrix:\n";
+            std::cout << "Matrix 1:\n";
+			matrices.matrixInput((double*) matrix1, row, col);
+			std::cout << "Matrix 2:\n";
+			matrices.matrixInput((double*) matrix2, row, col);
+			
+			matrices.subtractMatrices((double*) matrix1, (double*) matrix2, row, col);
 			matrices.printMatrix((double*) matrix1, row, col);
 			break;
 		}

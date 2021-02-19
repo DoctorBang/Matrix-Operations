@@ -29,6 +29,14 @@ struct MatrixFunctions{
 
         }
 
+        void subtractMatrices(double* finalMatrix, double* matrix, int col, int row){
+            for(int i = 0; i < row; i++){
+                for(int j = 0; j < col; j++)
+                    *((finalMatrix + i *row) +j) -= *((matrix +i *row) +j);
+            }
+
+        }
+
         void inputMatrixSize(int* row, int* column){
             std::cout << "Rows: ";
             std::cin >> *row;
