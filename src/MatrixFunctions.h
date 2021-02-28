@@ -4,7 +4,11 @@
 #include <iostream>
 
 struct MatrixFunctions{
-    public:
+        /*
+        *The following funtion has issues for multiplying a 1x1 matrix with a 
+        *larger matrix. If you need to multiply a 1x1 matrix, make sure to pass
+        *the column for the second vector in the row place.
+        */
         void multiplyMatrices(double* finalMatrix, double* matrix1, double* matrix2, int row, int col){
 			/*
 			*Matrices multiplied here

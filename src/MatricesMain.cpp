@@ -8,7 +8,7 @@ int main(){
     *Didn't leave them uninitilized because then they'll have 
     *random junk that just may or may not be equal.
     */
-	int row = 0, col = 0, row1 = 1, col1 = 1;
+	int row = 0, col = 0, row1 = 1, col1 = 1, passVar;
 	struct MatrixFunctions matrices;
 	
 	std::cout << "A) Multiply matrices. \n";
@@ -40,7 +40,11 @@ int main(){
 			std::cout << "Matrix 2: \n";
 			matrices.matrixInput( (double*) matrix2, row1, col1);
 
-			matrices.multiplyMatrices( (double*) finalMatrix, (double *)matrix1, (double *)matrix2, row, col);
+			if(row == 1)
+				passVar = col1;
+			else
+				passVar = row;
+			matrices.multiplyMatrices( (double*) finalMatrix, (double *)matrix1, (double *)matrix2, passVar, col);
 			matrices.printMatrix( (double*) finalMatrix, row, col1);
 			break;
 		}
