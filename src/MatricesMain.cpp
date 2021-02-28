@@ -1,4 +1,6 @@
 #include "MatrixFunctions.h"
+#include <algorithm>
+#include <string>
 
 //Declared as global because I don't want to pass the struct as a parameter for functions. :^)
 struct MatrixFunctions matrices;
@@ -26,10 +28,10 @@ int main(){
 	std::cout << "C) Subtract matrices.\n";
 	std::cout << "Q) Quit. \n";
 	std::cin.get(inputKey);
+    inputKey = std::toupper(inputKey, std::locale()); // Pushes char to a lowercase.
 
 	switch(inputKey){
-		case 'a':	//Section for multiplying matrices
-		case 'A':{
+		case 'A':{  //Section for multiplying matrices
 			while(col != row1){
 				std::cout << "Please enter the size of the matrix.\n";
 				matrices.inputMatrixSize(&row, &col);
@@ -61,8 +63,7 @@ int main(){
 			matrices.printMatrix( (double*) finalMatrix, row, col1);
 			break;
 		}
-		case 'b':	//Section for adding matrices
-		case 'B':{
+		case 'B':{  //Section for adding matrices
 			while(!col){
                 std::cout << "Please enter the size of the matrices: \n";
                 matrices.inputMatrixSize(&row, &col);
@@ -76,7 +77,6 @@ int main(){
 			matrices.printMatrix((double*) matrix1, row, col);
 			break;
 		}
-		case 'c':
 		case 'C':{
 			while(!col){
                 std::cout << "Please enter the size of the matrices: \n";
