@@ -1,5 +1,4 @@
 #include "MatrixFunctions.h"
-#include <algorithm>
 #include <string>
 
 //Declared as global because I don't want to pass the struct as a parameter for functions. :^)
