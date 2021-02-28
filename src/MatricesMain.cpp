@@ -1,5 +1,15 @@
 #include "MatrixFunctions.h"
 
+//Declared as global because I don't want to pass the struct as a parameter for functions. :^)
+struct MatrixFunctions matrices;
+
+void getMatrixInput(double* matrix, int row, int col, int matrixNum){
+	if(matrixNum == 0)
+		std::cout << "Please input the values in each matrix:\n";
+	std::cout << "Matrix " << matrixNum + 1 << ": \n";
+	matrices.matrixInput( (double*) matrix, row, col);	//Cast the arrays to a double pointer in order to pass it by reference
+}
+
 int main(){
 	char inputKey;
 	/*
@@ -9,7 +19,7 @@ int main(){
     *random junk that just may or may not be equal.
     */
 	int row = 0, col = 0, row1 = 1, col1 = 1, passVar;
-	struct MatrixFunctions matrices;
+
 	
 	std::cout << "A) Multiply matrices. \n";
 	std::cout << "B) Add matrices. \n";
@@ -33,17 +43,20 @@ int main(){
 			}
 
 			double matrix1[row][col] = {}, matrix2[row1][col1] = {}, finalMatrix[row][col1] = {};
- 
-			std::cout << "Please enter the values for each matrix:\n";
-			std::cout << "Matrix 1: \n";
-			matrices.matrixInput( (double*) matrix1, row, col);	//Cast the arrays to a double pointer in order to pass it by reference
-			std::cout << "Matrix 2: \n";
-			matrices.matrixInput( (double*) matrix2, row1, col1);
+			getMatrixInput((double*) matrix1, row, col, 0);
+			getMatrixInput((double*) matrix2, row1, col1, 1);
 
-			if(row == 1)
+			/*
+			*Fixes an issue where 1x1 matrices didn't multiply out all the way.
+			*By passing a variable equal to the number of columns of the second 
+			*matrix, the function in MatrixFunctions.h won't stop after 1 loop.
+			*/
+			if(row == 1){
 				passVar = col1;
-			else
+			}
+			else{
 				passVar = row;
+			}
 			matrices.multiplyMatrices( (double*) finalMatrix, (double *)matrix1, (double *)matrix2, passVar, col);
 			matrices.printMatrix( (double*) finalMatrix, row, col1);
 			break;
@@ -56,11 +69,8 @@ int main(){
             }
 			double matrix1[row][col] = {}, matrix2[row][col] = {};
 
-            std::cout << "Please input the values in each matrix:\n";
-            std::cout << "Matrix 1:\n";
-			matrices.matrixInput((double*) matrix1, row, col);
-			std::cout << "Matrix 2:\n";
-			matrices.matrixInput((double*) matrix2, row, col);
+			getMatrixInput((double*) matrix1, row, col, 0);
+			getMatrixInput((double*) matrix2, row1, col1, 1);
 			
 			matrices.addMatrices((double*) matrix1, (double*) matrix2, row, col);
 			matrices.printMatrix((double*) matrix1, row, col);
@@ -74,11 +84,8 @@ int main(){
             }
 			double matrix1[row][col] = {}, matrix2[row][col] = {};
 
-            std::cout << "Please input the values in each matrix:\n";
-            std::cout << "Matrix 1:\n";
-			matrices.matrixInput((double*) matrix1, row, col);
-			std::cout << "Matrix 2:\n";
-			matrices.matrixInput((double*) matrix2, row, col);
+			getMatrixInput((double*) matrix1, row, col, 0);
+			getMatrixInput((double*) matrix2, row1, col1, 1);			
 			
 			matrices.subtractMatrices((double*) matrix1, (double*) matrix2, row, col);
 			matrices.printMatrix((double*) matrix1, row, col);
@@ -89,6 +96,4 @@ int main(){
 	}
 
 	return 0;
-			
-
 }
