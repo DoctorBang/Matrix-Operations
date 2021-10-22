@@ -2,38 +2,35 @@
 #define MATRIXFUNCTIONS_H
 
 #include <iostream>
+#include <vector>
 
-//Most of the functions are self explanatory.
-struct MatrixFunctions{
-    /*
-    *The following funtion has issues for multiplying a 1x1 matrix with a 
-    *larger matrix. If you need to multiply a 1x1 matrix, make sure to pass
-    *the column for the second vector in the row place.
-    */
-    void multiplyMatrices(double* finalMatrix, double* matrix1, double* matrix2, int row, int col){
-		/*
-		*Matrices multiplied here
-		*Good website to see how matrix multiplition is done:
-		*https://www.mathsisfun.com/algebra/matrix-multiplying.html
-		*/
-		for(int i = 0; i < row; i++){
-			for(int j = 0; j < row; j++){
-				for(int k = 0; k < col; k++){
-                    *((finalMatrix + i *row) + j) += *((matrix1 + i *col) +k) * *((matrix2 + k * row) + j);
-				}
-			}
-		}
-			
-	}	
-
-    void addMatrices(double* finalMatrix, double* matrix, int col, int row){
-        for(int i = 0; i < row; i++){
-            for(int j = 0; j < col; j++){
-                *((finalMatrix + i *row) +j) += *((matrix +i *row) +j);
-            }
-        }
-
+template<typename T>
+std::vector<std::vector<T>> multiplyMatrices(
+  std::vector<std::vector<T>> a, std::vector<std::vector<T>> b
+    ){
+  T sum = 0;
+  std::vector<std::vector<T>> c;
+  std::vector<T> temp;
+  for(size_t i = 0; i < a.size(); ++i) {
+    for(size_t j = 0; j < b[i].size(); ++j) {
+      for(size_t k = 0; k < a[i].size(); ++k){
+        sum += a[i][k] * b[k][j];
+      }
+      temp.push_back(sum);
+      sum = 0;
     }
+    c.push_back(temp);
+    temp.clear();
+  }
+  return c;
+} 
+
+  template<typename T>
+  std::vector<std::vector<T>> addMatrices(
+      std::vector<std::vector<T>> a, std::vector<std::vector<T>> b
+      ){
+    
+  }
 
     void subtractMatrices(double* finalMatrix, double* matrix, int col, int row){
         for(int i = 0; i < row; i++){
@@ -60,14 +57,14 @@ struct MatrixFunctions{
         }
         std::cout << "\n";
     }
+  
+template<typename T>
+void printMatrix(std::vector<std::vector<T>> n){
+  for(auto i : n){
+    for(auto j : i)
+      std::cout << j << " ";
+    std::cout << "\n";
+  }
+}
 
-    void printMatrix(double* matrix, int rows, int columns){
-        for(int i = 0; i < rows; i++){
-            for(int j = 0; j < columns; j++){
-                std::cout << *((matrix + i * columns) + j) << " ";
-            }
-            std::cout << "\n";
-        }
-    }
-};
 #endif
