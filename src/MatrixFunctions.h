@@ -3,68 +3,99 @@
 
 #include <iostream>
 #include <vector>
+#include <initializer_list>
+
+#define MATRIX(X) std::vector<std::vector<X>>
+#define LIST(X) std::initializer_list<std::initializer_list<X>>
 
 template<typename T>
-std::vector<std::vector<T>> multiplyMatrices(
-  std::vector<std::vector<T>> a, std::vector<std::vector<T>> b
-    ){
-  T sum = 0;
-  std::vector<std::vector<T>> c;
-  std::vector<T> temp;
-  for(size_t i = 0; i < a.size(); ++i) {
-    for(size_t j = 0; j < b[i].size(); ++j) {
-      for(size_t k = 0; k < a[i].size(); ++k){
-        sum += a[i][k] * b[k][j];
+struct Matrix {
+public:
+  MATRIX(T) m;
+
+  Matrix() = default;
+
+  Matrix(LIST(T) list){
+    std::vector<T> temp;
+    for(auto i : list){
+      for(auto j : i){
+        temp.push_back(j);
       }
-      temp.push_back(sum);
-      sum = 0;
+      m.push_back(temp);
+      temp.clear();
     }
-    c.push_back(temp);
-    temp.clear();
-  }
-  return c;
-} 
-
-  template<typename T>
-  std::vector<std::vector<T>> addMatrices(
-      std::vector<std::vector<T>> a, std::vector<std::vector<T>> b
-      ){
-    
   }
 
-    void subtractMatrices(double* finalMatrix, double* matrix, int col, int row){
-        for(int i = 0; i < row; i++){
-            for(int j = 0; j < col; j++){
-                *((finalMatrix + i *row) +j) -= *((matrix +i *row) +j);
-            }
+  friend Matrix<T> operator*(Matrix<T> a, Matrix<T> b){
+    T sum = 0;
+    Matrix<T> c;
+    std::vector<T> temp;
+    std::cout << a.m.size() << " " << a.m[0].size() << std::endl;
+    for(size_t i = 0; i < a.m.size(); ++i) {
+      for(size_t j = 0; j < b.m[0].size(); ++j) {
+        for(size_t k = 0; k < a.m[0].size(); ++k){
+          sum += a.m[i][k] * b.m[k][j];
         }
-
+        std::cout << sum << std::endl;
+        temp.push_back(sum);
+        sum = 0;
+      }
+      c.m.push_back(temp);
+      temp.clear();
     }
+    return c;
+  } 
 
-    void inputMatrixSize(int* row, int* column){
-        std::cout << "Rows: ";
-        std::cin >> *row;
-        std::cout << "Columns: ";
-        std::cin >> *column;
+  friend Matrix<T> operator+(Matrix<T> a, Matrix<T> b){
+    Matrix<T> c;
+    std::vector<T> temp;
+    for(size_t i = 0; i < a.m.size(); ++i){
+      for(size_t j = 0; j < a.m[i].size(); ++j){
+        temp.push_back(a.m[i][j] + b.m[i][j]); 
+      }
+      c.m.push_back(temp);
+      temp.clear();
     }
-
-    void matrixInput(double* matrix, int rows, int columns){
-        for(int i = 0; i < rows; i++){
-            for(int j = 0; j < columns; j++){
-                std::cout << "Matrix position (" << i + 1 << ")(" << j + 1 << ") ";
-                std::cin >> *((matrix+i*columns) + j);
-            }
-        }
-        std::cout << "\n";
-    }
-  
-template<typename T>
-void printMatrix(std::vector<std::vector<T>> n){
-  for(auto i : n){
-    for(auto j : i)
-      std::cout << j << " ";
-    std::cout << "\n";
+    return c;
   }
-}
 
+  friend Matrix<T> operator-(Matrix<T> a, Matrix<T> b){
+    Matrix<T> c;
+    std::vector<T> temp;
+    for(size_t i = 0; i < a.m.size(); ++i){
+      for(size_t j = 0; j < a.m[i].size(); ++j){
+        temp.push_back(a.m[i][j] - b.m[i][j]); 
+      }
+      c.m.push_back(temp);
+      temp.clear();
+    }
+    return c;
+  }
+
+  void input(){
+    size_t row, col;
+    std::cout << "Enter the row size: ";
+    std::cin >> row;
+    std::cout << "Enter the column size: ";
+    std::cin >> col;
+    T val;
+    std::vector<T> temp;
+    for(size_t i = 0; i < row; ++i){
+      for(size_t j = 0; j < col; ++j){
+        std::cin >> val;
+        temp.push_back(val);
+      }
+      this->m.push_back(temp);
+      temp.clear();
+    }
+  }
+
+  void print(){
+    for(auto i : this->m){
+      for(auto j : i)
+        std::cout << j << " ";
+      std::cout << "\n";
+    }
+  }
+};
 #endif

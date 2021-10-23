@@ -1,12 +1,47 @@
 #include "MatrixFunctions.h"
-#include <string>
 
+void print_menu(){
+  std::cout << "0: Multiply\n" 
+    << "1: Add\n"
+    << "2: Subtract\n";
+}
 
 int main(){
-  std::vector<std::vector<int>> a = {{1,2,3},{1,2,3}};
-  std::vector<std::vector<int>> b = {{1,1}, {2,2}, {3,3}};
-  std::cout << "About to multiply\n";
-  std::vector<std::vector<int>> c = multiplyMatrices(a,b);
-  printMatrix(c);
+  Matrix<double> a,b,c;
+  print_menu();
+  int input;
+  std::cin >> input;
+  
+  switch(input){
+  case 0:
+    std::cout << "Enter matrix 1\n";
+    a.input();
+    std::cout << "Enter matrix 2\n";
+    b.input();
+    a.print();
+    b.print();
+    c = a * b;
+    c.print();
+    break;
+  case 1:
+    std::cout << "Enter matrix 1\n";
+    a.input();
+    std::cout << "Enter matrix 2\n";
+    b.input();
+    c = a + b;
+    c.print();
+    break;
+  case 2:
+    std::cout << "Enter matrix 1\n";
+    a.input();
+    std::cout << "Enter matrix 2\n";
+    b.input();
+    c = a - b;
+    c.print();
+    break;
+  default:
+    std::cout << "Menu option incorrect\n";
+  }
+
   return 0;
 }
