@@ -18,9 +18,8 @@ int main(){
     a.input();
     std::cout << "Enter matrix 2\n";
     b.input();
-    a.print();
-    b.print();
     c = a * b;
+    std::cout << "\n";
     c.print();
     break;
   case 1:

@@ -30,13 +30,11 @@ public:
     T sum = 0;
     Matrix<T> c;
     std::vector<T> temp;
-    std::cout << a.m.size() << " " << a.m[0].size() << std::endl;
     for(size_t i = 0; i < a.m.size(); ++i) {
       for(size_t j = 0; j < b.m[0].size(); ++j) {
         for(size_t k = 0; k < a.m[0].size(); ++k){
           sum += a.m[i][k] * b.m[k][j];
         }
-        std::cout << sum << std::endl;
         temp.push_back(sum);
         sum = 0;
       }
