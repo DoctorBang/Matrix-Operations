@@ -69,6 +69,15 @@ public:
     }
     return c;
   }
+  friend std::ostream& operator<<(std::ostream &output, Matrix<T> &mat){
+    for(auto i : mat.m){
+	for(auto j : i){
+	    output << j << " ";	
+	}
+	output << "\n";
+    }	
+    return output;
+  }
 
   void input(){
     size_t row, col;
@@ -85,14 +94,6 @@ public:
       }
       this->m.push_back(temp);
       temp.clear();
-    }
-  }
-
-  void print(){
-    for(auto i : this->m){
-      for(auto j : i)
-        std::cout << j << " ";
-      std::cout << "\n";
     }
   }
 };

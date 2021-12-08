@@ -19,8 +19,7 @@ int main(){
     std::cout << "Enter matrix 2\n";
     b.input();
     c = a * b;
-    std::cout << "\n";
-    c.print();
+    std::cout << c;
     break;
   case 1:
     std::cout << "Enter matrix 1\n";
@@ -28,7 +27,7 @@ int main(){
     std::cout << "Enter matrix 2\n";
     b.input();
     c = a + b;
-    c.print();
+    std::cout << c;
     break;
   case 2:
     std::cout << "Enter matrix 1\n";
@@ -36,7 +35,7 @@ int main(){
     std::cout << "Enter matrix 2\n";
     b.input();
     c = a - b;
-    c.print();
+    std::cout << c;
     break;
   default:
     std::cout << "Menu option incorrect\n";
