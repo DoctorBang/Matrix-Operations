@@ -1,3 +1,4 @@
+#include <iostream>
 #include "MatrixFunctions.h"
 
 void print_menu(){
@@ -8,9 +9,9 @@ void print_menu(){
 
 void get_in(Matrix<double>& a, Matrix<double>& b) {
     std::cout << "Enter matrix 1\n";
-    a.input();
+    std::cin >> a;
     std::cout << "Enter matrix 2\n";
-    b.input();
+    std::cin >> b;
 }
 
 int main(){
@@ -19,10 +20,10 @@ int main(){
     int input;
     std::cin >> input;
   
-    switch(input){
+    switch(input) {
     case 0:
         get_in(a,b);
-        std::cout << a*b;
+        std::cout << a * b;
         break;
     case 1:
         get_in(a,b);

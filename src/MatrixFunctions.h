@@ -2,124 +2,166 @@
 #define MATRIXFUNCTIONS_H
 
 #include <iostream>
-#include <iomanip>
 #include <vector>
 #include <initializer_list>
-
-#define LIST(X) std::initializer_list<std::initializer_list<X>>
+#include <cassert>
+#include <utility>
+#include <algorithm>
+#include <concepts>
 
 template<typename T>
-struct Matrix {
+concept Number = std::integral<T> || std::floating_point<T>;
+
+template<Number T>
+class Matrix {
+    using Vec         = std::vector<std::vector<T>>;
+    using Initializer = std::initializer_list<std::initializer_list<T>>;
+
 public:
-    // Innter matrix
-    std::vector<std::vector<T>> m;
+    using value_type     = T;
+    using size_type      = typename Vec::size_type;
+    using iterator       = typename Vec::iterator;
+    using const_iterator = typename Vec::const_iterator;
 
-    Matrix() = default;
+    struct Size {
+        size_type row;
+        size_type col;
+    };
 
-    Matrix(LIST(T) list){
-        std::vector<T> temp;
-        for(auto i : list){
-          for(auto j : i){
-            temp.push_back(j);
-          }
-          m.push_back(temp);
-          temp.clear();
-        }
+    constexpr Matrix() = default;
+
+    constexpr Matrix(size_type row, size_type col) {
+        alloc(row, col);
     }
 
-    Matrix(const Matrix<T>& a){
-        std::vector<T> temp;
-        for(auto i : a.m) {
-            for(auto j : i){
-                temp.push_back(j);
-            }
-          this->m.push_back(temp);
-          temp.clear();
-        }
+    constexpr Matrix(Size s) {
+        alloc(s.row, s.col);
     }
 
-    friend Matrix<T> operator*(Matrix<T> a, Matrix<T> b){
+    constexpr Matrix(Initializer list)
+        : m_{ list }
+    {
+    }
+
+    constexpr Matrix(const Matrix<T>& m)
+        : m_{ m.m_ }
+    {
+    }
+
+    constexpr Matrix(Matrix<T>&& m) 
+        : m_{ std::move(m.m_) }
+    {
+    }
+
+    constexpr Matrix<T>& operator*(const Matrix& m) {
+        assert(size().row == m.size().col && size().col == m.size().col);
         T sum = 0;
-        Matrix<T> c;
-        std::vector<T> temp;
-        for(size_t i = 0; i < a.m.size(); ++i) {
-            for(size_t j = 0; j < b.m[0].size(); ++j) {
-                for(size_t k = 0; k < a.m[0].size(); ++k){
-                    sum += a.m[i][k] * b.m[k][j];
+        Matrix<T> c(size().row, m.size().col);
+
+        for(size_type i = 0; i < m_.size(); ++i) {
+            c[i] = [&]() {
+                std::vector<T> tmp(m.m_[0].size());
+                for (size_type j = 0; j < tmp.size(); ++j) {
+                    tmp[j] = [&]() {
+                        T sum = 0;
+                        for (size_type k = 0; k < m_[0].size(); ++k) {
+                            sum += m_[i][k] * m.m_[k][j];
+                        }
+                        return sum;
+                    }();
                 }
-            temp.push_back(sum);
-            sum = 0;
-          }
-          c.m.push_back(temp);
-          temp.clear();
+                return tmp;
+            }();
         } 
-        return c;
+        m_ = std::move(c.m_);
+        return *this;
     } 
 
-    friend Matrix<T> operator+(Matrix<T> a, Matrix<T> b){
-        Matrix<T> c;
-        std::vector<T> temp;
-        for(size_t i = 0; i < a.m.size(); ++i){
-            for(size_t j = 0; j < a.m[i].size(); ++j){
-                temp.push_back(a.m[i][j] + b.m[i][j]); 
-            }
-            c.m.push_back(temp);
-            temp.clear();
+    constexpr Matrix<T>& operator+(const Matrix<T>& m) {
+        assert(size().row == m.size().row && size().col == m.size().col);
+        for(size_type i = 0; i < m_.size(); ++i){
+              for(size_type j = 0; j < m_[i].size(); ++j){
+                  m_[i][j] += m.m_[i][j]; 
+              }
         }
-        return c;
+        return *this;
     }
 
-    friend Matrix<T> operator-(Matrix<T> a, Matrix<T> b){
-        Matrix<T> c;
-        std::vector<T> temp;
-        for(size_t i = 0; i < a.m.size(); ++i){
-            for(size_t j = 0; j < a.m[i].size(); ++j){
-                temp.push_back(a.m[i][j] - b.m[i][j]); 
+    constexpr Matrix<T>& operator-(const Matrix<T>& m) {
+        assert(size().row == m.size().row && size().col == m.size().col);
+        for(size_type i = 0; i < m.m_.size(); ++i){
+            for(size_type j = 0; j < m.m_[i].size(); ++j){
+                m_[i][j] -= m.m_[i][j];
             }
-            c.m.push_back(temp);
-            temp.clear();
         }
-        return c;
+        return *this;
     }
 
-    friend std::ostream& operator<<(std::ostream &output, Matrix<T> mat){
-        for(auto i : mat.m){
-	          for(auto j : i){
-	              output << j << "\t";
-	          }
-	          output << "\n";
-        }	
-        return output;
+
+    constexpr inline Matrix<T>& operator=(const Matrix<T>& m){
+        this->m_ = m.m_;
+        return *this;
     }
 
-    Matrix<T> operator=(Matrix<T> a){
-        return a;
+    constexpr inline Matrix<T>& operator=(Matrix<T>&& m) {
+        this->m_ = std::move(m.m_);
+        return *this;
     }
 
-    std::vector<T> operator[](size_t i) const {
-        return this->m[i];
+    [[nodiscard]] constexpr inline std::vector<T>& operator[](size_t i) {
+        return this->m_[i];
     }
 
-    std::vector<T>& operator[](size_t i){
-        return this->m[i];
+    constexpr inline Size size() const noexcept {
+        return { m_.size(), m_[0].size() };
     }
 
-    void input(){
-        size_t row, col;
+    constexpr iterator begin() noexcept { return m_.begin(); }
+
+    constexpr iterator end() noexcept { return m_.end(); }
+
+    constexpr const_iterator begin() const noexcept { return m_.cbegin(); }
+    
+    constexpr const_iterator end() const noexcept { return m_.cend(); }
+
+    constexpr const_iterator cbegin() const noexcept { return m_.cbegin(); }
+    
+    constexpr const_iterator cend() const noexcept { return m_.cend(); }
+
+    friend std::istream& operator>>(std::istream& is, Matrix<T>& m){
+        size_type row, col;
         std::cout << "Enter the row size: ";
-        std::cin >> row;
+        is >> row;
         std::cout << "Enter the column size: ";
-        std::cin >> col;
-        T val;
-        std::vector<T> temp;
-        for(size_t i = 0; i < row; ++i){
-            for(size_t j = 0; j < col; ++j){
-                std::cin >> val;
-                temp.push_back(val);
+        is >> col;
+        m.alloc(row, col);
+        for(auto& vec : m) {
+            for(auto& v : vec) {
+                is >> v;
             }
-            this->m.push_back(temp);
-            temp.clear();
         }
+        return is;
     }
+
+    friend std::ostream& operator<<(std::ostream& os, const Matrix<T>& m) {
+        for(const auto& vec : m) {
+            for(const auto& v : vec) {
+                os << v << "\t";
+            }
+            os << "\n";
+        }
+        return os;
+    };
+
+private:
+    constexpr inline void alloc(size_t row, size_t col) {
+        m_ = std::vector(
+            row, std::vector<T>(col, 0)
+        );
+    }
+
+    // Inner matrix
+    Vec m_;
 };
-#endif
+
+#endif // MATRIXFUNCTIONS_H
